@@ -13,7 +13,15 @@ loss_h(
   family,
   t_min,
   t_max,
-  parametric_warps = FALSE
+  t_min_curve,
+  t_max_curve,
+  incompleteness = NULL,
+  lambda_inc = NULL,
+  periodic = FALSE,
+  Kt = 8,
+  warping = "nonparametric",
+  priors = FALSE,
+  prior_sd = NULL
 )
 }
 \arguments{
@@ -27,19 +35,49 @@ loss_h(
 
 \item{beta.inner}{spline coefficient vector to be estimated for warping function h.}
 
-\item{family}{\code{gaussian} or \code{binomial}.}
+\item{family}{One of \code{c("gaussian","binomial","gamma","poisson")}.
+For internal purposes, can also be set to \code{"gamma-varEM"} and
+\code{"poisson-varEM"} if the preceding FPCA step in \code{register_fpca} was
+performed with \code{fpca_type = "variationalEM"} which uses Gaussian family.}
 
-\item{t_min}{minimum value to be evaluated on the time domain.}
+\item{t_min, t_max}{minimum and maximum value to be evaluated on the time domain.}
 
-\item{t_max}{maximum value to be evaluated on the time domain.}
+\item{t_min_curve, t_max_curve}{minimum and maximum value of the observed time domain of the
+(potentially incomplete) curve.}
 
-\item{parametric_warps}{If FALSE (default), inverse warping functions are 
-estimated nonparametrically. If 'beta_cdf', they are assumed to have the form of a 
-Beta(a,b) CDF. If 'piecewise' they follow a piecewise parameterized function.}
+\item{incompleteness}{Optional specification of incompleteness structure.
+One of \code{c("leading","trailing","full")}, specifying that incompleteness
+is present only in the initial measurements, only in the trailing measurements, or
+in both, respectively. For details see the accompanying vignette.
+Defaults to NULL, i.e. no incompleteness structure.
+Can only be set when \code{warping = "nonparametric"}.}
+
+\item{lambda_inc}{Penalization parameter to control the amount of
+overall dilation of the domain.
+The higher this lambda, the more the registered domains are forced to have the
+same length as the observed domains.
+Only used if \code{incompleteness} is not NULL.}
+
+\item{periodic}{If \code{TRUE} uses periodic b-spline basis functions. Default is \code{FALSE}.}
+
+\item{Kt}{Number of B-spline basis functions used to estimate mean functions. Default is 8.}
+
+\item{warping}{If \code{nonparametric} (default), inverse warping functions are estimated nonparametrically. 
+If \code{piecewise_linear2} they follow a piecewise linear function with 2 knots.}
+
+\item{priors}{For \code{warping = "piecewise_linear2"} only. Logical indicator of whether to add Normal priors to pull the knots toward the identity line.}
+
+\item{prior_sd}{For \code{warping = "piecewise_linear2"} with \code{priors = TRUE} only. User-specified standard deviation for the Normal priors 
+(single value applied to all 4 knot priors).}
 }
 \value{
 The scalar value taken by the loss function.
 }
 \description{
 Loss function for registration step optimization
+}
+\author{
+Julia Wrobel \email{julia.wrobel@cuanschutz.edu},
+Erin McDonnell \email{eim2117@cumc.columbia.edu},
+Alexander Bauer \email{alexander.bauer@stat.uni-muenchen.de}
 }

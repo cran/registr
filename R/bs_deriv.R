@@ -11,7 +11,7 @@
 #' Value of 0 returns the original set of b-spline basis functions. 
 #' @param intercept if TRUE, an intercept is included in the basis; default is TRUE
 #' 
-#' @author Julia Wrobel \email{jw3134@@cumc.columbia.edu}
+#' @author Julia Wrobel \email{julia.wrobel@@cuanschutz.edu}
 #' @importFrom splines splineDesign
 #' 
 #' @return A matrix containing:
@@ -20,16 +20,16 @@
 #' @export
 #'
 
-bs_deriv <- function(x, knots, degree = 3L, Boundary.knots = range(x), derivative = 1, intercept = TRUE){
+bs_deriv = function(x, knots, degree = 3L, Boundary.knots = range(x), derivative = 1, intercept = TRUE){
   order = 1L + as.integer(degree)
   D = length(x)
   
   derivatives = rep(derivative, D)
   Aknots = sort(c(rep(Boundary.knots, order), knots))
   
-  basis = splineDesign(Aknots, x, order, derivs = derivatives)
+  basis = splineDesign(Aknots, x, order, derivs = derivatives, outer.ok = TRUE)
   if (!intercept) 
-    basis <- basis[, -1L, drop = FALSE]
+    basis = basis[, -1L, drop = FALSE]
   
   return(basis)
 }

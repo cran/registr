@@ -11,8 +11,15 @@ loss_h_gradient(
   knots,
   beta.inner,
   family = "gaussian",
+  incompleteness = NULL,
+  lambda_inc = NULL,
   t_min,
-  t_max
+  t_max,
+  t_min_curve,
+  t_max_curve,
+  Kt = 8,
+  periodic = FALSE,
+  warping = "nonparametric"
 )
 }
 \arguments{
@@ -26,11 +33,39 @@ loss_h_gradient(
 
 \item{beta.inner}{spline coefficient vector to be estimated for warping function h.}
 
-\item{family}{\code{gaussian} or \code{binomial}.}
+\item{family}{One of \code{c("gaussian","binomial")}. Defaults to \code{"gaussian"}.}
 
-\item{t_min}{minimum value to be evaluated on the time domain.}
+\item{incompleteness}{Optional specification of incompleteness structure.
+One of \code{c("leading","trailing","full")}, specifying that incompleteness
+is present only in the initial measurements, only in the trailing measurements, or
+in both, respectively. For details see the accompanying vignette.
+Defaults to NULL, i.e. no incompleteness structure.
+Can only be set when \code{warping = "nonparametric"}.}
 
-\item{t_max}{maximum value to be evaluated on the time domain.}
+\item{lambda_inc}{Penalization parameter to control the amount of
+overall dilation of the domain.
+The higher this lambda, the more the registered domains are forced to have the
+same length as the observed domains.
+Only used if \code{incompleteness} is not NULL.}
+
+\item{t_min}{minimum and maximum value to be evaluated on the time domain.}
+
+\item{t_max}{minimum and maximum value to be evaluated on the time domain.}
+
+\item{t_min_curve}{minimum and maximum value of the observed time domain of the
+(potentially incomplete) curve.}
+
+\item{t_max_curve}{minimum and maximum value of the observed time domain of the
+(potentially incomplete) curve.}
+
+\item{Kt}{Number of B-spline basis functions used to estimate mean functions. Default is 8.}
+
+\item{periodic}{If \code{TRUE}, uses periodic b-spline basis functions. Default is \code{FALSE}. 
+\code{loss_h_gradient()} is currently only available for \code{periodic = FALSE}.}
+
+\item{warping}{If \code{nonparametric} (default), inverse warping functions are estimated nonparametrically. 
+If \code{piecewise_linear2} they follow a piecewise linear function with 2 knots.
+\code{loss_h_gradient()} is currently only available for \code{warping = "nonparametric"}.}
 }
 \value{
 A numeric vector of spline coefficients for the gradient of the loss function.
@@ -39,5 +74,6 @@ A numeric vector of spline coefficients for the gradient of the loss function.
 Gradient of loss function for registration step
 }
 \author{
-Julia Wrobel \email{jw3134@cumc.columbia.edu}
+Julia Wrobel \email{julia.wrobel@cuanschutz.edu},
+Alexander Bauer \email{alexander.bauer@stat.uni-muenchen.de}
 }

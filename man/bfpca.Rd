@@ -6,7 +6,8 @@
 \usage{
 bfpca(
   Y,
-  npc = 1,
+  npc = NULL,
+  npc_varExplained = NULL,
   Kt = 8,
   maxiter = 50,
   t_min = NULL,
@@ -14,15 +15,29 @@ bfpca(
   print.iter = FALSE,
   row_obj = NULL,
   seed = 1988,
+  periodic = FALSE,
+  error_thresh = 1e-04,
+  verbose = 1,
+  subsample = TRUE,
   ...
 )
 }
 \arguments{
 \item{Y}{Dataframe. Should have variables id, value, index.}
 
-\item{npc}{Default is 1. Number of principal components to calculate.}
+\item{npc}{The number of functional principal components (FPCs)
+has to be specified either directly as \code{npc} or based on their explained
+share of variance. In the latter case, \code{npc_varExplained} has to be set
+to a share between 0 and 1.}
 
-\item{Kt}{Number of B-spline basis functions used to estimate mean functions. Default is 8.}
+\item{npc_varExplained}{The number of functional principal components (FPCs)
+has to be specified either directly as \code{npc} or based on their explained
+share of variance. In the latter case, \code{npc_varExplained} has to be set
+to a share between 0 and 1.}
+
+\item{Kt}{Number of B-spline basis functions used to estimate mean functions
+and functional principal components. Default is 8. If \code{npc_varExplained}
+is used, \code{Kt} is set to 20.}
 
 \item{maxiter}{Maximum number of iterations to perform for EM algorithm. Default is 50.}
 
@@ -35,15 +50,33 @@ bfpca(
 \item{row_obj}{If NULL, the function cleans the data and calculates row indices. 
 Keep this NULL if you are using standalone \code{register} function.}
 
-\item{seed}{Set seed for reproducibility. Default is 1988.}
+\item{seed}{Set seed for reproducibility. Defaults to 1988.}
+
+\item{periodic}{If TRUE, uses periodic b-spline basis functions. Default is FALSE.}
+
+\item{error_thresh}{Error threshold to end iterations. Defaults to 0.0001.}
+
+\item{verbose}{Can be set to integers between 0 and 4 to control the level of
+detail of the printed diagnostic messages. Higher numbers lead to more detailed
+messages. Defaults to 1.}
+
+\item{subsample}{if the number of rows of the data is greater than 
+10 million rows, the `id` values are subsampled to get the mean coefficients.}
 
 \item{...}{Additional arguments passed to or from other functions}
 }
 \value{
 An object of class \code{fpca} containing:
+\item{fpca_type}{Information that FPCA was performed with the 'variationEM' approach,
+in contrast to registr::gfpca_twoStep.}
+\item{t_vec}{Time vector over which the mean \code{mu} and the functional principal
+components \code{efunctions} were evaluated.}
 \item{knots}{Cutpoints for B-spline basis used to rebuild \code{alpha}.}
 \item{efunctions}{\eqn{D \times npc} matrix of estimated FPC basis functions.}
 \item{evalues}{Estimated variance of the FPC scores.}
+\item{evalues_sum}{Approximation of the overall variance in \code{Y}, based
+on an initial run of the FPCA with \code{npc = 20}. Is \code{NULL} if
+\code{npc_varExplained} was not specified.}
 \item{npc}{number of FPCs.}
 \item{scores}{\eqn{I \times npc} matrix of estimated FPC scores.}
 \item{alpha}{Estimated population-level mean.}
@@ -51,7 +84,8 @@ An object of class \code{fpca} containing:
 with \code{refund.shiny} package.}
 \item{subject_coefs}{B-spline basis coefficients used to construct subject-specific means. 
 For use in \code{registr()} function.}
-\item{Yhat}{FPC approximation of subject-specific means.}
+\item{Yhat}{FPC approximation of subject-specific means, before applying the
+response function.}
 \item{Y}{The observed data.}
 \item{family}{\code{binomial}, for compatibility with \code{refund.shiny} package.}
 \item{error}{vector containing error for each iteration of the algorithm.}
@@ -60,12 +94,30 @@ For use in \code{registr()} function.}
 Function used in the FPCA step for registering binary functional data,
 called by \code{\link{register_fpca}} when \code{family = "binomial"}. 
 This method uses a variational EM algorithm to estimate scores and principal components for 
-binary functional data.
+binary functional data. \cr \cr
+The number of functional principal components (FPCs) can either be specified
+directly (argument \code{npc}) or chosen based on the explained share of
+variance (\code{npc_varExplained}). In the latter case, the explained share of
+variance and accordingly the number of FPCs is estimated before the main
+estimation step by once running the FPCA with \code{npc = 20} (and
+correspondingly \code{Kt = 20}). Doing so, we approximate the overall
+variance in the data \code{Y} with the variance represented by the FPC basis
+with 20 FPCs.
 }
 \examples{
 Y = simulate_functional_data()$Y
-bfpca_object = bfpca(Y, npc = 2, print.iter = TRUE)
 
+# estimate 2 FPCs
+bfpca_obj = bfpca(Y, npc = 2, print.iter = TRUE, maxiter = 25)
+
+
+\donttest{
+plot(bfpca_obj)
+
+# estimate npc adaptively, to explain 90\% of the overall variation
+bfpca_obj2 = bfpca(Y, npc_varExplained = 0.9, print.iter = TRUE, maxiter = 30)
+plot(bfpca_obj2)
+}
 }
 \references{
 Jaakkola, T. S. and Jordan, M. I. (1997).
@@ -77,6 +129,7 @@ Tipping, M. E. (1999). Probabilistic Visualisation of High-dimensional binary da
 \emph{Advances in neural information processing systems}, 592--598.
 }
 \author{
-Julia Wrobel \email{jw3134@cumc.columbia.edu},
-Jeff Goldsmith \email{ajg2202@cumc.columbia.edu}
+Julia Wrobel \email{julia.wrobel@cuanschutz.edu},
+Jeff Goldsmith \email{ajg2202@cumc.columbia.edu},
+Alexander Bauer \email{alexander.bauer@stat.uni-muenchen.de}
 }

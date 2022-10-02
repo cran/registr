@@ -3,7 +3,6 @@
 #' Function used for data cleaning.
 #'
 #' @param data Dataframe. Should have values id, value, index.
-#' @param family \code{gaussian} or \code{binomial}.
 #' 
 #' @importFrom dplyr mutate group_by filter select ungroup arrange
 #' @importFrom tidyr spread
@@ -14,8 +13,8 @@
 #' \item{Y_rows}{A dataframe containing the first and last row for each subject.}
 #' 
 #' @export
-
-data_clean <- function(data, family = "binomial"){
+#' 
+data_clean = function(data){
   
 	## NULLify global values called by tidyverse functions
 	value = index = NULL
@@ -38,17 +37,17 @@ data_clean <- function(data, family = "binomial"){
   	group_by(id) %>% 
     filter(row_number() == 1 | row_number() == n()) %>% 
   	mutate(index = c("first", "last")) %>%
-    select(-value ) %>% 
-  	spread(index, row) %>% 
+    select(-value) %>% 
+  	tidyr::spread(index, row) %>% 
   	ungroup() %>% 
   	mutate(subject = row_number())
   
   data = data %>%
   	group_by(id) %>%
-  	mutate(index_scaled = (index - min(index))/max(index) ) %>%
+  	mutate(index_scaled = (index - min(index))/ (max(index) - min(index)) ) %>%
   	ungroup()
   
-  colnames(data_rows) <- c("id", "first_row", "last_row", "subject")
+  colnames(data_rows) = c("id", "first_row", "last_row", "subject")
   I = dim(data_rows)[1]
   
   return(list(Y = data, I = I, Y_rows = data_rows))
