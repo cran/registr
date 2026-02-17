@@ -191,7 +191,7 @@ registr_par_priors = register_fpca(Y = registration_data, family = "binomial",
                                    warping = "piecewise_linear2",
                                    priors = TRUE, prior_sd = 0.1)
 
-## ---- register_par_priors_plots, echo = FALSE, fig.show='hold'----------------
+## ----register_par_priors_plots, echo = FALSE, fig.show='hold'-----------------
 registr_par_priors2 = register_fpca(Y = registration_data, family = "binomial", 
                                     Kt = 8, Kh = 4, npc = 1, gradient = FALSE,
 																		warping = "piecewise_linear2",

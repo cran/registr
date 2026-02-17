@@ -1,9 +1,9 @@
 Package: registr
 Title: Curve Registration for Exponential Family Functional Data
-Version: 2.1.0
+Version: 2.2.1
 Authors@R: c(
     person("Julia", "Wrobel", role = c("aut", "cre"), 
-    email = "julia.wrobel@cuanschutz.edu",
+    email = "julia.wrobel@emory.edu",
     comment = c(ORCID = "0000-0001-6783-1421")),
     person("Alexander", "Bauer", role = "aut", email = "alexander.bauer@stat.uni-muenchen.de"),
     person("Erin", "McDonnell", role = "aut", email = "eim2117@cumc.columbia.edu"),
@@ -18,24 +18,25 @@ Description: A method for performing joint registration and functional principal
     This software handles both binary and continuous functional data, and is
     especially applicable in accelerometry and wearable technology.
 Depends: R (>= 3.2)
-Imports: tidyr, magrittr, dplyr, pbs, Rcpp (>= 0.11.5), parallel, MASS,
-        utils, gamm4, lme4, mgcv, purrr, Matrix
+Imports: tidyr, magrittr, dplyr, pbs, Rcpp, parallel, MASS, utils,
+        gamm4, lme4, mgcv, purrr, Matrix
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.0
+RoxygenNote: 7.3.3
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: testthat, knitr, rmarkdown, cowplot, ggplot2, pbapply,
         fastglm
 SystemRequirements: GNU make
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2022-09-26 21:47:56 UTC; wrobelj
-Author: Julia Wrobel [aut, cre] (<https://orcid.org/0000-0001-6783-1421>),
+Packaged: 2026-02-16 20:44:55 UTC; JWROBE8
+Author: Julia Wrobel [aut, cre] (ORCID:
+    <https://orcid.org/0000-0001-6783-1421>),
   Alexander Bauer [aut],
   Erin McDonnell [aut],
   Fabian Scheipl [ctb],
   Jeff Goldsmith [aut]
-Maintainer: Julia Wrobel <julia.wrobel@cuanschutz.edu>
+Maintainer: Julia Wrobel <julia.wrobel@emory.edu>
 Repository: CRAN
-Date/Publication: 2022-10-02 21:40:02 UTC
+Date/Publication: 2026-02-17 09:50:02 UTC

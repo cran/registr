@@ -41,3 +41,16 @@ Preparing things below
 
 * mgcv spline choices
 * penalization for optimization (not sure how to choose best sigma)
+
+# registr 2.1.1
+
+* Bug fixes to address source code pointing to old GCC compiler
+* Updated email address of maintainer
+* Minor documentation fixes
+
+# registr 2.2.1
+
+* New submission after package was archived
+* Dropped C++11 specification and added `-DARMA_USE_CURRENT` to support RcppArmadillo 15+
+* Fixed Rd cross-reference for `gamm4` (added package anchor)
+* Fixed R CMD check NOTE for NSE global variable `id`
